@@ -1,0 +1,36 @@
+name: deploy-gcp-run
+
+on:
+  push:
+    tags:
+      - 'minsight-stg-v*'
+
+jobs:
+  deploy:
+    name: Deploy to GCP Cloud Run (Continuous)
+    runs-on: ubuntu-latest
+
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      GCP_SA_KEY: ${{ secrets.DEPLOY_SERVICE_ACCOUNT }}
+      GCP_SUFFIX: gh-ms
+      GCP_SUFFIX_SHARED: gh-bemr
+      GCR_FOLDER: gh-minsight
+      GCP_PROJECT: unchained-main
+      GCP_REGION: europe-west3
+      GCP_REGISTERY: eu.gcr.io
+      GKE_CLUSTER: autopilot-cluster-1
+      GKE_ZONE: europe-west3-c
+      DEBUG: false
+      PROJECT_NAME: minsight
+      USE_GKE_GCLOUD_AUTH_PLUGIN: True
+
+    steps:
+      - uses: actions/checkout@v3
+        id: checkout
+
+      - name: Extract variables from trigger tag
+        id: vars
+        run: |
+          echo "TAG_STAGE=$(echo ${{ github.ref_name }} | cut -d - -f 2)" >> $GITHUB_ENV
+          echo "TAG_VERSION=$(echo ${{ github.ref_name }} | cut -d - -f 3 | cut -c 2-)" >> $GITHUB_ENV
