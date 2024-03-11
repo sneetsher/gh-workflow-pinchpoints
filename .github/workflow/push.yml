@@ -1,0 +1,25 @@
+name: push
+on:
+  push:
+
+jobs:
+  deploy:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    env:
+      VAR1: ${{ secrets.subTITLE }}
+      VAR2: ${{ secrets.TITLE }}
+      VAR3: low
+      VAR4: HIGH
+
+    steps:
+      - uses: actions/checkout@v4
+        id: checkout
+
+      - name: Test1
+        id: test1
+        run: |
+          echo "REF=$(echo ${{ github.ref_name }})" >> $GITHUB_ENV
+          
+          
