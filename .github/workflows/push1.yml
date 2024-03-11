@@ -22,5 +22,17 @@ jobs:
         run: |
           echo "REF=$(echo ${{ github.ref_name }})" >> $GITHUB_ENV
           echo 0
+          function push_secret() \
+          { \
+          # exist? or create new secret
+          echo gcloud secrets describe $1 || \
+          ( echo -n "$2" | \
+          echo gcloud secrets create $1 --replication-policy=automatic --data-file=- )
+          # same? or add new version
+          [[ "$( echo gcloud secrets versions access latest --secret=$1 )" == "$2" ]] || \
+          ( echo -n "$2" | \
+          echo gcloud secrets versions add $1  --data-file=- )
+          }
+          push_secret P1 P2
           
           
