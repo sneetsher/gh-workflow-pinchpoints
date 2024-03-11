@@ -21,5 +21,6 @@ jobs:
         id: test1
         run: |
           echo "REF=$(echo ${{ github.ref_name }})" >> $GITHUB_ENV
+          echo 0
           
           
